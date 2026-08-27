@@ -29,20 +29,20 @@ type client struct {
 func InitializeIraAccess(jsonPath string) (*client, error) {
 	data, err := os.ReadFile(jsonPath)
 	if err != nil {
-		return nil, fmt.Errorf("iam_client: failed to read %s: %w", jsonPath, err)
+		return nil, fmt.Errorf("failed to read %s: %w", jsonPath, err)
 	}
 
 	var cfg iraIAMConfig
 	if err := json.Unmarshal(data, &cfg); err != nil {
-		return nil, fmt.Errorf("iam_client: failed to parse %s: %w", jsonPath, err)
+		return nil, fmt.Errorf("failed to parse %s: %w", jsonPath, err)
 	}
 	if cfg.AppID == "" || cfg.AppSecret == "" || cfg.IamURL == "" {
-		return nil, fmt.Errorf("iam_client: %s must set app_id, app_secret and iam_url", jsonPath)
+		return nil, fmt.Errorf("%s must set app_id, app_secret and iam_url", jsonPath)
 	}
 
 	conn, err := grpc.NewClient(cfg.IamURL, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		return nil, fmt.Errorf("iam_client: failed to connect to %s: %w", cfg.IamURL, err)
+		return nil, fmt.Errorf("failed to connect to %s: %w", cfg.IamURL, err)
 	}
 
 	return &client{
