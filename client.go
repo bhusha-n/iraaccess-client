@@ -19,14 +19,14 @@ type iraIAMConfig struct {
 	IamURL    string `json:"iam_url"`
 }
 
-type Client struct {
+type client struct {
 	conn      *grpc.ClientConn
 	api       authzv1.IraAccessServiceClient
 	appID     string
 	appSecret string
 }
 
-func NewConnection(jsonPath string) (*Client, error) {
+func InitializeIraAccess(jsonPath string) (*client, error) {
 	data, err := os.ReadFile(jsonPath)
 	if err != nil {
 		return nil, fmt.Errorf("iam_client: failed to read %s: %w", jsonPath, err)
@@ -45,7 +45,7 @@ func NewConnection(jsonPath string) (*Client, error) {
 		return nil, fmt.Errorf("iam_client: failed to connect to %s: %w", cfg.IamURL, err)
 	}
 
-	return &Client{
+	return &client{
 		conn:      conn,
 		api:       authzv1.NewIraAccessServiceClient(conn),
 		appID:     cfg.AppID,
@@ -53,23 +53,23 @@ func NewConnection(jsonPath string) (*Client, error) {
 	}, nil
 }
 
-func (c *Client) IraCloseConn() error {
+func (c *client) CloseConn() error {
 	return c.conn.Close()
 }
 
-func (c *Client) authed(ctx context.Context) context.Context {
+func (c *client) authed(ctx context.Context) context.Context {
 	return metadata.AppendToOutgoingContext(ctx, "app_id", c.appID, "app_secret", c.appSecret)
 }
 
-func (c *Client) IraGrantTenantAccess(ctx context.Context, grantedBy, userID, tenantID string) error {
+func (c *client) GrantTenantAccess(ctx context.Context, grantedBy, userID, tenantID string) error {
 	return c.grantAccess(ctx, grantedBy, userID, tenantID, false)
 }
 
-func (c *Client) IraGrantAdminAccess(ctx context.Context, grantedBy, userID string) error {
+func (c *client) GrantAdminAccess(ctx context.Context, grantedBy, userID string) error {
 	return c.grantAccess(ctx, grantedBy, userID, "", true)
 }
 
-func (c *Client) grantAccess(ctx context.Context, grantedBy, userID, tenantID string, asAdmin bool) error {
+func (c *client) grantAccess(ctx context.Context, grantedBy, userID, tenantID string, asAdmin bool) error {
 	resp, err := c.api.GrantAccess(c.authed(ctx), &authzv1.GrantAccessRequest{
 		GrantedBy: grantedBy,
 		UserId:    userID,
@@ -80,12 +80,12 @@ func (c *Client) grantAccess(ctx context.Context, grantedBy, userID, tenantID st
 		return err
 	}
 	if !resp.GetSuccess() {
-		return fmt.Errorf("iam_client: grant access was not successful")
+		return fmt.Errorf("ERROR : grant access was not successful")
 	}
 	return nil
 }
 
-func (c *Client) IraCheckAccess(ctx context.Context, userID, tenantID string) (bool, error) {
+func (c *client) CheckAccess(ctx context.Context, userID, tenantID string) (bool, error) {
 	resp, err := c.api.CheckAccess(c.authed(ctx), &authzv1.CheckAccessRequest{
 		UserId:   userID,
 		TenantId: tenantID,
@@ -97,11 +97,40 @@ func (c *Client) IraCheckAccess(ctx context.Context, userID, tenantID string) (b
 	return resp.GetAllowed(), nil
 }
 
-func (c *Client) IraCheckAdminAccess(ctx context.Context, userId string) (bool, error) {
+func (c *client) DeleteAccess(ctx context.Context, userID, TenantID, DeletedBy string) error {
+	resp, err := c.api.DeleteAccess(c.authed(ctx), &authzv1.DeleteAccessRequest{
+		UserId:    userID,
+		TenantId:  TenantID,
+		DeletedBy: DeletedBy,
+	})
+	if err != nil {
+		return err
+	}
+	if !resp.GetSuccess() {
+		return fmt.Errorf("ERROR : delete access was not successful")
+	}
+	return nil
+}
+
+func (c *client) DeleteAdminAccess(ctx context.Context, userID, DeletedBy string) error {
+	resp, err := c.api.DeleteAdminAccess(c.authed(ctx), &authzv1.DeleteAdminAccessRequest{
+		UserId:    userID,
+		DeletedBy: DeletedBy,
+	})
+	if err != nil {
+		return err
+	}
+	if !resp.GetSuccess() {
+		return fmt.Errorf("ERROR : delete access was not successfull")
+	}
+	return nil
+}
+
+func (c *client) CheckAdminAccess(ctx context.Context, userId string) (bool, error) {
 	resp, err := c.api.CheckAdminAccess(c.authed(ctx), &authzv1.CheckAdminAccessRequest{
 		UserId: userId,
 	})
-	c.api.CheckAdminAccess(c.authed(ctx), &authzv1.CheckAdminAccessRequest{})
+
 	if err != nil {
 		return false, err
 	}

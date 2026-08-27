@@ -7,12 +7,11 @@
 package iraaccessv1
 
 import (
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
-
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -25,7 +24,7 @@ const (
 type GrantAccessRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	TenantId      string                 `protobuf:"bytes,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"` // ignored when as_admin = true
+	TenantId      string                 `protobuf:"bytes,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
 	AsAdmin       bool                   `protobuf:"varint,3,opt,name=as_admin,json=asAdmin,proto3" json:"as_admin,omitempty"`
 	GrantedBy     string                 `protobuf:"bytes,4,opt,name=granted_by,json=grantedBy,proto3" json:"granted_by,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -142,6 +141,222 @@ func (x *GrantAccessResponse) GetZedToken() string {
 	return ""
 }
 
+type DeleteAccessRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	TenantId      string                 `protobuf:"bytes,2,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`
+	DeletedBy     string                 `protobuf:"bytes,4,opt,name=deleted_by,json=deletedBy,proto3" json:"deleted_by,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteAccessRequest) Reset() {
+	*x = DeleteAccessRequest{}
+	mi := &file_proto_authzv1_authz_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteAccessRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteAccessRequest) ProtoMessage() {}
+
+func (x *DeleteAccessRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_authzv1_authz_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteAccessRequest.ProtoReflect.Descriptor instead.
+func (*DeleteAccessRequest) Descriptor() ([]byte, []int) {
+	return file_proto_authzv1_authz_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *DeleteAccessRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *DeleteAccessRequest) GetTenantId() string {
+	if x != nil {
+		return x.TenantId
+	}
+	return ""
+}
+
+func (x *DeleteAccessRequest) GetDeletedBy() string {
+	if x != nil {
+		return x.DeletedBy
+	}
+	return ""
+}
+
+type DeleteAccessResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	ZedToken      string                 `protobuf:"bytes,2,opt,name=zed_token,json=zedToken,proto3" json:"zed_token,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteAccessResponse) Reset() {
+	*x = DeleteAccessResponse{}
+	mi := &file_proto_authzv1_authz_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteAccessResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteAccessResponse) ProtoMessage() {}
+
+func (x *DeleteAccessResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_authzv1_authz_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteAccessResponse.ProtoReflect.Descriptor instead.
+func (*DeleteAccessResponse) Descriptor() ([]byte, []int) {
+	return file_proto_authzv1_authz_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *DeleteAccessResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *DeleteAccessResponse) GetZedToken() string {
+	if x != nil {
+		return x.ZedToken
+	}
+	return ""
+}
+
+type DeleteAdminAccessRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	DeletedBy     string                 `protobuf:"bytes,4,opt,name=deleted_by,json=deletedBy,proto3" json:"deleted_by,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteAdminAccessRequest) Reset() {
+	*x = DeleteAdminAccessRequest{}
+	mi := &file_proto_authzv1_authz_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteAdminAccessRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteAdminAccessRequest) ProtoMessage() {}
+
+func (x *DeleteAdminAccessRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_authzv1_authz_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteAdminAccessRequest.ProtoReflect.Descriptor instead.
+func (*DeleteAdminAccessRequest) Descriptor() ([]byte, []int) {
+	return file_proto_authzv1_authz_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *DeleteAdminAccessRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *DeleteAdminAccessRequest) GetDeletedBy() string {
+	if x != nil {
+		return x.DeletedBy
+	}
+	return ""
+}
+
+type DeleteAdminAccessResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	ZedToken      string                 `protobuf:"bytes,2,opt,name=zed_token,json=zedToken,proto3" json:"zed_token,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteAdminAccessResponse) Reset() {
+	*x = DeleteAdminAccessResponse{}
+	mi := &file_proto_authzv1_authz_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteAdminAccessResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteAdminAccessResponse) ProtoMessage() {}
+
+func (x *DeleteAdminAccessResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_authzv1_authz_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteAdminAccessResponse.ProtoReflect.Descriptor instead.
+func (*DeleteAdminAccessResponse) Descriptor() ([]byte, []int) {
+	return file_proto_authzv1_authz_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *DeleteAdminAccessResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *DeleteAdminAccessResponse) GetZedToken() string {
+	if x != nil {
+		return x.ZedToken
+	}
+	return ""
+}
+
 type CheckAccessRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -152,7 +367,7 @@ type CheckAccessRequest struct {
 
 func (x *CheckAccessRequest) Reset() {
 	*x = CheckAccessRequest{}
-	mi := &file_proto_authzv1_authz_proto_msgTypes[2]
+	mi := &file_proto_authzv1_authz_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -164,7 +379,7 @@ func (x *CheckAccessRequest) String() string {
 func (*CheckAccessRequest) ProtoMessage() {}
 
 func (x *CheckAccessRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_authzv1_authz_proto_msgTypes[2]
+	mi := &file_proto_authzv1_authz_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -177,7 +392,7 @@ func (x *CheckAccessRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckAccessRequest.ProtoReflect.Descriptor instead.
 func (*CheckAccessRequest) Descriptor() ([]byte, []int) {
-	return file_proto_authzv1_authz_proto_rawDescGZIP(), []int{2}
+	return file_proto_authzv1_authz_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *CheckAccessRequest) GetUserId() string {
@@ -203,7 +418,7 @@ type CheckAccessResponse struct {
 
 func (x *CheckAccessResponse) Reset() {
 	*x = CheckAccessResponse{}
-	mi := &file_proto_authzv1_authz_proto_msgTypes[3]
+	mi := &file_proto_authzv1_authz_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -215,7 +430,7 @@ func (x *CheckAccessResponse) String() string {
 func (*CheckAccessResponse) ProtoMessage() {}
 
 func (x *CheckAccessResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_authzv1_authz_proto_msgTypes[3]
+	mi := &file_proto_authzv1_authz_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -228,7 +443,7 @@ func (x *CheckAccessResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckAccessResponse.ProtoReflect.Descriptor instead.
 func (*CheckAccessResponse) Descriptor() ([]byte, []int) {
-	return file_proto_authzv1_authz_proto_rawDescGZIP(), []int{3}
+	return file_proto_authzv1_authz_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *CheckAccessResponse) GetAllowed() bool {
@@ -247,7 +462,7 @@ type CheckAdminAccessRequest struct {
 
 func (x *CheckAdminAccessRequest) Reset() {
 	*x = CheckAdminAccessRequest{}
-	mi := &file_proto_authzv1_authz_proto_msgTypes[4]
+	mi := &file_proto_authzv1_authz_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -259,7 +474,7 @@ func (x *CheckAdminAccessRequest) String() string {
 func (*CheckAdminAccessRequest) ProtoMessage() {}
 
 func (x *CheckAdminAccessRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_authzv1_authz_proto_msgTypes[4]
+	mi := &file_proto_authzv1_authz_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -272,7 +487,7 @@ func (x *CheckAdminAccessRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckAdminAccessRequest.ProtoReflect.Descriptor instead.
 func (*CheckAdminAccessRequest) Descriptor() ([]byte, []int) {
-	return file_proto_authzv1_authz_proto_rawDescGZIP(), []int{4}
+	return file_proto_authzv1_authz_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *CheckAdminAccessRequest) GetUserId() string {
@@ -291,7 +506,7 @@ type CheckAdminAccessResponse struct {
 
 func (x *CheckAdminAccessResponse) Reset() {
 	*x = CheckAdminAccessResponse{}
-	mi := &file_proto_authzv1_authz_proto_msgTypes[5]
+	mi := &file_proto_authzv1_authz_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -303,7 +518,7 @@ func (x *CheckAdminAccessResponse) String() string {
 func (*CheckAdminAccessResponse) ProtoMessage() {}
 
 func (x *CheckAdminAccessResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_authzv1_authz_proto_msgTypes[5]
+	mi := &file_proto_authzv1_authz_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -316,7 +531,7 @@ func (x *CheckAdminAccessResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckAdminAccessResponse.ProtoReflect.Descriptor instead.
 func (*CheckAdminAccessResponse) Descriptor() ([]byte, []int) {
-	return file_proto_authzv1_authz_proto_rawDescGZIP(), []int{5}
+	return file_proto_authzv1_authz_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *CheckAdminAccessResponse) GetAllowed() bool {
@@ -339,6 +554,21 @@ const file_proto_authzv1_authz_proto_rawDesc = "" +
 	"granted_by\x18\x04 \x01(\tR\tgrantedBy\"L\n" +
 	"\x13GrantAccessResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x1b\n" +
+	"\tzed_token\x18\x02 \x01(\tR\bzedToken\"j\n" +
+	"\x13DeleteAccessRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1b\n" +
+	"\ttenant_id\x18\x02 \x01(\tR\btenantId\x12\x1d\n" +
+	"\n" +
+	"deleted_by\x18\x04 \x01(\tR\tdeletedBy\"M\n" +
+	"\x14DeleteAccessResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x1b\n" +
+	"\tzed_token\x18\x02 \x01(\tR\bzedToken\"R\n" +
+	"\x18DeleteAdminAccessRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1d\n" +
+	"\n" +
+	"deleted_by\x18\x04 \x01(\tR\tdeletedBy\"R\n" +
+	"\x19DeleteAdminAccessResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x1b\n" +
 	"\tzed_token\x18\x02 \x01(\tR\bzedToken\"J\n" +
 	"\x12CheckAccessRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x1b\n" +
@@ -348,11 +578,13 @@ const file_proto_authzv1_authz_proto_rawDesc = "" +
 	"\x17CheckAdminAccessRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\"4\n" +
 	"\x18CheckAdminAccessResponse\x12\x18\n" +
-	"\aallowed\x18\x01 \x01(\bR\aallowed2\x8b\x02\n" +
+	"\aallowed\x18\x01 \x01(\bR\aallowed2\xbc\x03\n" +
 	"\x10IraAccessService\x12L\n" +
 	"\vGrantAccess\x12\x1d.IraAccess.GrantAccessRequest\x1a\x1e.IraAccess.GrantAccessResponse\x12L\n" +
 	"\vCheckAccess\x12\x1d.IraAccess.CheckAccessRequest\x1a\x1e.IraAccess.CheckAccessResponse\x12[\n" +
-	"\x10CheckAdminAccess\x12\".IraAccess.CheckAdminAccessRequest\x1a#.IraAccess.CheckAdminAccessResponseB9Z7github.com/bhusha-n/authz/proto/iraaccessv1;iraaccessv1b\x06proto3"
+	"\x10CheckAdminAccess\x12\".IraAccess.CheckAdminAccessRequest\x1a#.IraAccess.CheckAdminAccessResponse\x12O\n" +
+	"\fDeleteAccess\x12\x1e.IraAccess.DeleteAccessRequest\x1a\x1f.IraAccess.DeleteAccessResponse\x12^\n" +
+	"\x11DeleteAdminAccess\x12#.IraAccess.DeleteAdminAccessRequest\x1a$.IraAccess.DeleteAdminAccessResponseB9Z7github.com/bhusha-n/authz/proto/iraaccessv1;iraaccessv1b\x06proto3"
 
 var (
 	file_proto_authzv1_authz_proto_rawDescOnce sync.Once
@@ -366,24 +598,32 @@ func file_proto_authzv1_authz_proto_rawDescGZIP() []byte {
 	return file_proto_authzv1_authz_proto_rawDescData
 }
 
-var file_proto_authzv1_authz_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_proto_authzv1_authz_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_proto_authzv1_authz_proto_goTypes = []any{
-	(*GrantAccessRequest)(nil),       // 0: IraAccess.GrantAccessRequest
-	(*GrantAccessResponse)(nil),      // 1: IraAccess.GrantAccessResponse
-	(*CheckAccessRequest)(nil),       // 2: IraAccess.CheckAccessRequest
-	(*CheckAccessResponse)(nil),      // 3: IraAccess.CheckAccessResponse
-	(*CheckAdminAccessRequest)(nil),  // 4: IraAccess.CheckAdminAccessRequest
-	(*CheckAdminAccessResponse)(nil), // 5: IraAccess.CheckAdminAccessResponse
+	(*GrantAccessRequest)(nil),        // 0: IraAccess.GrantAccessRequest
+	(*GrantAccessResponse)(nil),       // 1: IraAccess.GrantAccessResponse
+	(*DeleteAccessRequest)(nil),       // 2: IraAccess.DeleteAccessRequest
+	(*DeleteAccessResponse)(nil),      // 3: IraAccess.DeleteAccessResponse
+	(*DeleteAdminAccessRequest)(nil),  // 4: IraAccess.DeleteAdminAccessRequest
+	(*DeleteAdminAccessResponse)(nil), // 5: IraAccess.DeleteAdminAccessResponse
+	(*CheckAccessRequest)(nil),        // 6: IraAccess.CheckAccessRequest
+	(*CheckAccessResponse)(nil),       // 7: IraAccess.CheckAccessResponse
+	(*CheckAdminAccessRequest)(nil),   // 8: IraAccess.CheckAdminAccessRequest
+	(*CheckAdminAccessResponse)(nil),  // 9: IraAccess.CheckAdminAccessResponse
 }
 var file_proto_authzv1_authz_proto_depIdxs = []int32{
 	0, // 0: IraAccess.IraAccessService.GrantAccess:input_type -> IraAccess.GrantAccessRequest
-	2, // 1: IraAccess.IraAccessService.CheckAccess:input_type -> IraAccess.CheckAccessRequest
-	4, // 2: IraAccess.IraAccessService.CheckAdminAccess:input_type -> IraAccess.CheckAdminAccessRequest
-	1, // 3: IraAccess.IraAccessService.GrantAccess:output_type -> IraAccess.GrantAccessResponse
-	3, // 4: IraAccess.IraAccessService.CheckAccess:output_type -> IraAccess.CheckAccessResponse
-	5, // 5: IraAccess.IraAccessService.CheckAdminAccess:output_type -> IraAccess.CheckAdminAccessResponse
-	3, // [3:6] is the sub-list for method output_type
-	0, // [0:3] is the sub-list for method input_type
+	6, // 1: IraAccess.IraAccessService.CheckAccess:input_type -> IraAccess.CheckAccessRequest
+	8, // 2: IraAccess.IraAccessService.CheckAdminAccess:input_type -> IraAccess.CheckAdminAccessRequest
+	2, // 3: IraAccess.IraAccessService.DeleteAccess:input_type -> IraAccess.DeleteAccessRequest
+	4, // 4: IraAccess.IraAccessService.DeleteAdminAccess:input_type -> IraAccess.DeleteAdminAccessRequest
+	1, // 5: IraAccess.IraAccessService.GrantAccess:output_type -> IraAccess.GrantAccessResponse
+	7, // 6: IraAccess.IraAccessService.CheckAccess:output_type -> IraAccess.CheckAccessResponse
+	9, // 7: IraAccess.IraAccessService.CheckAdminAccess:output_type -> IraAccess.CheckAdminAccessResponse
+	3, // 8: IraAccess.IraAccessService.DeleteAccess:output_type -> IraAccess.DeleteAccessResponse
+	5, // 9: IraAccess.IraAccessService.DeleteAdminAccess:output_type -> IraAccess.DeleteAdminAccessResponse
+	5, // [5:10] is the sub-list for method output_type
+	0, // [0:5] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -400,7 +640,7 @@ func file_proto_authzv1_authz_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_authzv1_authz_proto_rawDesc), len(file_proto_authzv1_authz_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

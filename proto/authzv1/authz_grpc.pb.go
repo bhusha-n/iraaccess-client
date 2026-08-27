@@ -8,7 +8,6 @@ package iraaccessv1
 
 import (
 	context "context"
-
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -20,21 +19,22 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	IraAccessService_GrantAccess_FullMethodName      = "/IraAccess.IraAccessService/GrantAccess"
-	IraAccessService_CheckAccess_FullMethodName      = "/IraAccess.IraAccessService/CheckAccess"
-	IraAccessService_CheckAdminAccess_FullMethodName = "/IraAccess.IraAccessService/CheckAdminAccess"
+	IraAccessService_GrantAccess_FullMethodName       = "/IraAccess.IraAccessService/GrantAccess"
+	IraAccessService_CheckAccess_FullMethodName       = "/IraAccess.IraAccessService/CheckAccess"
+	IraAccessService_CheckAdminAccess_FullMethodName  = "/IraAccess.IraAccessService/CheckAdminAccess"
+	IraAccessService_DeleteAccess_FullMethodName      = "/IraAccess.IraAccessService/DeleteAccess"
+	IraAccessService_DeleteAdminAccess_FullMethodName = "/IraAccess.IraAccessService/DeleteAdminAccess"
 )
 
 // IraAccessServiceClient is the client API for IraAccessService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type IraAccessServiceClient interface {
-	// GrantAccess makes a user a member of a tenant, or (when as_admin
-	// is true) a platform admin with access to every tenant.
 	GrantAccess(ctx context.Context, in *GrantAccessRequest, opts ...grpc.CallOption) (*GrantAccessResponse, error)
-	// CheckAccess checks whether a user can access a given tenant.
 	CheckAccess(ctx context.Context, in *CheckAccessRequest, opts ...grpc.CallOption) (*CheckAccessResponse, error)
 	CheckAdminAccess(ctx context.Context, in *CheckAdminAccessRequest, opts ...grpc.CallOption) (*CheckAdminAccessResponse, error)
+	DeleteAccess(ctx context.Context, in *DeleteAccessRequest, opts ...grpc.CallOption) (*DeleteAccessResponse, error)
+	DeleteAdminAccess(ctx context.Context, in *DeleteAdminAccessRequest, opts ...grpc.CallOption) (*DeleteAdminAccessResponse, error)
 }
 
 type iraAccessServiceClient struct {
@@ -75,16 +75,35 @@ func (c *iraAccessServiceClient) CheckAdminAccess(ctx context.Context, in *Check
 	return out, nil
 }
 
+func (c *iraAccessServiceClient) DeleteAccess(ctx context.Context, in *DeleteAccessRequest, opts ...grpc.CallOption) (*DeleteAccessResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteAccessResponse)
+	err := c.cc.Invoke(ctx, IraAccessService_DeleteAccess_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *iraAccessServiceClient) DeleteAdminAccess(ctx context.Context, in *DeleteAdminAccessRequest, opts ...grpc.CallOption) (*DeleteAdminAccessResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteAdminAccessResponse)
+	err := c.cc.Invoke(ctx, IraAccessService_DeleteAdminAccess_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // IraAccessServiceServer is the server API for IraAccessService service.
 // All implementations must embed UnimplementedIraAccessServiceServer
 // for forward compatibility.
 type IraAccessServiceServer interface {
-	// GrantAccess makes a user a member of a tenant, or (when as_admin
-	// is true) a platform admin with access to every tenant.
 	GrantAccess(context.Context, *GrantAccessRequest) (*GrantAccessResponse, error)
-	// CheckAccess checks whether a user can access a given tenant.
 	CheckAccess(context.Context, *CheckAccessRequest) (*CheckAccessResponse, error)
 	CheckAdminAccess(context.Context, *CheckAdminAccessRequest) (*CheckAdminAccessResponse, error)
+	DeleteAccess(context.Context, *DeleteAccessRequest) (*DeleteAccessResponse, error)
+	DeleteAdminAccess(context.Context, *DeleteAdminAccessRequest) (*DeleteAdminAccessResponse, error)
 	mustEmbedUnimplementedIraAccessServiceServer()
 }
 
@@ -103,6 +122,12 @@ func (UnimplementedIraAccessServiceServer) CheckAccess(context.Context, *CheckAc
 }
 func (UnimplementedIraAccessServiceServer) CheckAdminAccess(context.Context, *CheckAdminAccessRequest) (*CheckAdminAccessResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CheckAdminAccess not implemented")
+}
+func (UnimplementedIraAccessServiceServer) DeleteAccess(context.Context, *DeleteAccessRequest) (*DeleteAccessResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteAccess not implemented")
+}
+func (UnimplementedIraAccessServiceServer) DeleteAdminAccess(context.Context, *DeleteAdminAccessRequest) (*DeleteAdminAccessResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteAdminAccess not implemented")
 }
 func (UnimplementedIraAccessServiceServer) mustEmbedUnimplementedIraAccessServiceServer() {}
 func (UnimplementedIraAccessServiceServer) testEmbeddedByValue()                          {}
@@ -179,6 +204,42 @@ func _IraAccessService_CheckAdminAccess_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _IraAccessService_DeleteAccess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteAccessRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IraAccessServiceServer).DeleteAccess(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: IraAccessService_DeleteAccess_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IraAccessServiceServer).DeleteAccess(ctx, req.(*DeleteAccessRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IraAccessService_DeleteAdminAccess_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteAdminAccessRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IraAccessServiceServer).DeleteAdminAccess(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: IraAccessService_DeleteAdminAccess_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IraAccessServiceServer).DeleteAdminAccess(ctx, req.(*DeleteAdminAccessRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // IraAccessService_ServiceDesc is the grpc.ServiceDesc for IraAccessService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -197,6 +258,14 @@ var IraAccessService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CheckAdminAccess",
 			Handler:    _IraAccessService_CheckAdminAccess_Handler,
+		},
+		{
+			MethodName: "DeleteAccess",
+			Handler:    _IraAccessService_DeleteAccess_Handler,
+		},
+		{
+			MethodName: "DeleteAdminAccess",
+			Handler:    _IraAccessService_DeleteAdminAccess_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

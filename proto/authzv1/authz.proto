@@ -6,23 +6,48 @@ option go_package = "github.com/bhusha-n/authz/proto/iraaccessv1;iraaccessv1";
 
 
 service IraAccessService {
-  // GrantAccess makes a user a member of a tenant, or (when as_admin
-  // is true) a platform admin with access to every tenant.
+
   rpc GrantAccess(GrantAccessRequest) returns (GrantAccessResponse);
 
-  // CheckAccess checks whether a user can access a given tenant.
   rpc CheckAccess(CheckAccessRequest) returns (CheckAccessResponse);
+
   rpc CheckAdminAccess(CheckAdminAccessRequest) returns (CheckAdminAccessResponse);
+
+  rpc DeleteAccess(DeleteAccessRequest) returns (DeleteAccessResponse);
+
+  rpc DeleteAdminAccess(DeleteAdminAccessRequest) returns (DeleteAdminAccessResponse);
 }
 
 message GrantAccessRequest {
   string user_id = 1;
-  string tenant_id = 2; // ignored when as_admin = true
+  string tenant_id = 2; 
   bool as_admin = 3;
   string granted_by=4;
 }
 
 message GrantAccessResponse {
+  bool success = 1;
+  string zed_token = 2;
+}
+
+message DeleteAccessRequest{
+  string user_id = 1;
+  string tenant_id = 2;
+  string deleted_by=4;
+}
+
+message DeleteAccessResponse{
+  bool success = 1;
+  string zed_token = 2;
+}
+
+
+message DeleteAdminAccessRequest{
+  string user_id = 1;
+  string deleted_by=4;
+}
+
+message DeleteAdminAccessResponse{
   bool success = 1;
   string zed_token = 2;
 }
@@ -35,6 +60,7 @@ message CheckAccessRequest {
 message CheckAccessResponse {
   bool allowed = 1;
 }
+
 
 message CheckAdminAccessRequest {
   string user_id = 1;
