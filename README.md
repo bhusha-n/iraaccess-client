@@ -38,7 +38,7 @@ go mod tidy
 
 ##  Go Implementation 
 
-Here is a complete, clean example showing how to initialize the client, manage its connection lifecycle, and interact with the available access control API endpoints.
+Here is a complete, example showing how to initialize the client, manage its connection lifecycle, and interact with the available access control API endpoints.
 
 ```go
 package main
