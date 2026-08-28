@@ -1,10 +1,10 @@
-# Ira Access Client Integration Guide
+# Ira Access Client Guide
 
 This guide explains how to integrate and use the `iraaccess-client` package within your Go application to communicate with the access management server.
 
 ---
 
-## ⚙️ Configuration Setup
+##  Configuration Setup
 
 The library requires a JSON configuration file to authenticate your application identity. You can name this file anything (e.g., `ira-config.json`) and place it anywhere, provided you pass its path to the initializer.
 
@@ -25,7 +25,7 @@ Create your JSON file with the following layout:
 
 ---
 
-## 🚀 Installation
+##  Installation
 
 Run the following commands in your project terminal to install the client package:
 
@@ -36,7 +36,7 @@ go mod tidy
 
 ---
 
-## 💻 Go Implementation Blueprint
+##  Go Implementation 
 
 Here is a complete, clean example showing how to initialize the client, manage its connection lifecycle, and interact with the available access control API endpoints.
 
