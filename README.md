@@ -4,6 +4,17 @@ This guide explains how to integrate and use the `iraaccess-client` package with
 
 ---
 
+## Access Model
+
+Every registered app can **check** access freely. Only apps explicitly trusted as management apps (e.g. `admin_console`) can **grant** or **delete** access — including granting access for their own app. If your app calls a grant/delete method and isn't a trusted management app, the server returns `PermissionDenied`.
+
+| Method | Who can call it |
+|---|---|
+| `CheckAccess`, `CheckAdminAccess` | Any registered app |
+| `GrantTenantAccessAs`, `GrantAdminAccessAs`, `DeleteAccessAs`, `DeleteAdminAccessAs` | Only trusted management apps |
+
+---
+
 ##  Configuration Setup
 
 The library requires a JSON configuration file to authenticate your application identity. You can name this file anything (e.g., `ira-config.json`) and place it anywhere, provided you pass its path to the initializer.
@@ -30,15 +41,15 @@ Create your JSON file with the following layout:
 Run the following commands in your project terminal to install the client package:
 
 ```bash
-go get github.com/bhusha-n/iraaccess-client@v0.2.1
+go get github.com/bhusha-n/iraaccess-client@v0.3.0
 go mod tidy
 ```
 
 ---
 
-##  Go Implementation 
+##  Go Implementation
 
-Here is a complete, example showing how to initialize the client, manage its connection lifecycle, and interact with the available access control API endpoints.
+Here is a complete example showing how to initialize the client, manage its connection lifecycle, and interact with the available access control API endpoints.
 
 ```go
 package main
@@ -60,50 +71,52 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to initialize : %v", err)
 	}
-	
+
 	// 2. Ensure connection resources are safely closed when main exits
-    defer client.CloseConn()
+	defer client.CloseConn()
 
 	log.Println("IraAccess Client securely connected to the server!")
 
 	// ==========================================
-	//  Available API Usage Methods
+	//  Check methods - any registered app can call these
 	// ==========================================
 
-	// Grant Admin Access
-	err = client.GrantAdminAccess(ctx, "admin_user_1", "target_user_123")
-	if err != nil {
-		log.Printf("GrantAdminAccess failed: %v", err)
-	}
-
-	// Check Admin Access
 	isAdmin, err := client.CheckAdminAccess(ctx, "target_user_123")
 	if err != nil {
 		log.Printf("CheckAdminAccess failed: %v", err)
 	}
 	log.Printf("User Admin status: %t", isAdmin)
 
-	// Grant Tenant Access
-	err = client.GrantTenantAccess(ctx, "admin_user_1", "target_user_123", "tenant_xyz")
-	if err != nil {
-		log.Printf("GrantTenantAccess failed: %v", err)
-	}
-
-	// Check Tenant Access
 	isAllowed, err := client.CheckAccess(ctx, "target_user_123", "tenant_xyz")
 	if err != nil {
 		log.Printf("CheckAccess failed: %v", err)
 	}
 	log.Printf("User access to tenant allowed: %t", isAllowed)
 
-	// Delete Tenant Access
-	err = client.DeleteAccess(ctx, "target_user_123", "tenant_xyz", "admin_user_1")
+	// ==========================================
+	//  Grant/Delete methods - management apps only
+	//  (e.g. admin_console). Calling these from a
+	//  non-management app returns PermissionDenied.
+	// ==========================================
+
+	targetAppID := "campaign_manager" // the app whose scope you're managing
+
+	err = client.GrantAdminAccessAs(ctx, targetAppID, "admin_user_1", "target_user_123")
+	if err != nil {
+		log.Printf("GrantAdminAccessAs failed: %v", err)
+	}
+
+	err = client.GrantTenantAccessAs(ctx, targetAppID, "admin_user_1", "target_user_123", "tenant_xyz")
+	if err != nil {
+		log.Printf("GrantTenantAccessAs failed: %v", err)
+	}
+
+	err = client.DeleteAccess(ctx, targetAppID, "target_user_123", "tenant_xyz", "admin_user_1")
 	if err != nil {
 		log.Printf("DeleteAccess failed: %v", err)
 	}
 
-	// Delete Admin Access
-	err = client.DeleteAdminAccess(ctx, "target_user_123", "admin_user_1")
+	err = client.DeleteAdminAccess(ctx, targetAppID, "target_user_123", "admin_user_1")
 	if err != nil {
 		log.Printf("DeleteAdminAccess failed: %v", err)
 	}
