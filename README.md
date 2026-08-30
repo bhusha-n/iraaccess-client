@@ -77,9 +77,9 @@ func main() {
 
 	log.Println("IraAccess Client securely connected to the server!")
 
-	// ==========================================
+
 	//  Check methods - any registered app can call these
-	// ==========================================
+
 
 	isAdmin, err := client.CheckAdminAccess(ctx, "target_user_123")
 	if err != nil {
@@ -93,22 +93,21 @@ func main() {
 	}
 	log.Printf("User access to tenant allowed: %t", isAllowed)
 
-	// ==========================================
+
 	//  Grant/Delete methods - management apps only
 	//  (e.g. admin_console). Calling these from a
 	//  non-management app returns PermissionDenied.
-	// ==========================================
 
 	targetAppID := "campaign_manager" // the app whose scope you're managing
 
-	err = client.GrantAdminAccessAs(ctx, targetAppID, "admin_user_1", "target_user_123")
+	err = client.GrantAdminAccess(ctx, targetAppID, "admin_user_1", "target_user_123")
 	if err != nil {
-		log.Printf("GrantAdminAccessAs failed: %v", err)
+		log.Printf("GrantAdminAccess failed: %v", err)
 	}
 
-	err = client.GrantTenantAccessAs(ctx, targetAppID, "admin_user_1", "target_user_123", "tenant_xyz")
+	err = client.GrantTenantAccess(ctx, targetAppID, "admin_user_1", "target_user_123", "tenant_xyz")
 	if err != nil {
-		log.Printf("GrantTenantAccessAs failed: %v", err)
+		log.Printf("GrantTenantAccess failed: %v", err)
 	}
 
 	err = client.DeleteAccess(ctx, targetAppID, "target_user_123", "tenant_xyz", "admin_user_1")
