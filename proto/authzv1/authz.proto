@@ -23,6 +23,7 @@ message GrantAccessRequest {
   string tenant_id = 2; 
   bool as_admin = 3;
   string granted_by=4;
+  string target_app_id = 5;
 }
 
 message GrantAccessResponse {
@@ -33,7 +34,8 @@ message GrantAccessResponse {
 message DeleteAccessRequest{
   string user_id = 1;
   string tenant_id = 2;
-  string deleted_by=4;
+  string deleted_by=3;
+  string target_app_id = 4;
 }
 
 message DeleteAccessResponse{
@@ -44,7 +46,8 @@ message DeleteAccessResponse{
 
 message DeleteAdminAccessRequest{
   string user_id = 1;
-  string deleted_by=4;
+  string deleted_by=2;
+  string target_app_id = 3;
 }
 
 message DeleteAdminAccessResponse{

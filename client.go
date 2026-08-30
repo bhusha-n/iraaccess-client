@@ -29,20 +29,20 @@ type client struct {
 func InitializeIraAccess(jsonPath string) (*client, error) {
 	data, err := os.ReadFile(jsonPath)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read %s: %w", jsonPath, err)
+		return nil, fmt.Errorf("iam_client: failed to read %s: %w", jsonPath, err)
 	}
 
 	var cfg iraIAMConfig
 	if err := json.Unmarshal(data, &cfg); err != nil {
-		return nil, fmt.Errorf("failed to parse %s: %w", jsonPath, err)
+		return nil, fmt.Errorf("iam_client: failed to parse %s: %w", jsonPath, err)
 	}
 	if cfg.AppID == "" || cfg.AppSecret == "" || cfg.IamURL == "" {
-		return nil, fmt.Errorf("%s must set app_id, app_secret and iam_url", jsonPath)
+		return nil, fmt.Errorf("iam_client: %s must set app_id, app_secret and iam_url", jsonPath)
 	}
 
 	conn, err := grpc.NewClient(cfg.IamURL, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		return nil, fmt.Errorf("failed to connect to %s: %w", cfg.IamURL, err)
+		return nil, fmt.Errorf("iam_client: failed to connect to %s: %w", cfg.IamURL, err)
 	}
 
 	return &client{
@@ -61,20 +61,21 @@ func (c *client) authed(ctx context.Context) context.Context {
 	return metadata.AppendToOutgoingContext(ctx, "app_id", c.appID, "app_secret", c.appSecret)
 }
 
-func (c *client) GrantTenantAccess(ctx context.Context, grantedBy, userID, tenantID string) error {
-	return c.grantAccess(ctx, grantedBy, userID, tenantID, false)
+func (c *client) GrantTenantAccessAs(ctx context.Context, targetAppID, grantedBy, userID, tenantID string) error {
+	return c.grantAccess(ctx, targetAppID, grantedBy, userID, tenantID, false)
 }
 
-func (c *client) GrantAdminAccess(ctx context.Context, grantedBy, userID string) error {
-	return c.grantAccess(ctx, grantedBy, userID, "", true)
+func (c *client) GrantAdminAccessAs(ctx context.Context, targetAppID, grantedBy, userID string) error {
+	return c.grantAccess(ctx, targetAppID, grantedBy, userID, "", true)
 }
 
-func (c *client) grantAccess(ctx context.Context, grantedBy, userID, tenantID string, asAdmin bool) error {
+func (c *client) grantAccess(ctx context.Context, targetAppID, grantedBy, userID, tenantID string, asAdmin bool) error {
 	resp, err := c.api.GrantAccess(c.authed(ctx), &authzv1.GrantAccessRequest{
-		GrantedBy: grantedBy,
-		UserId:    userID,
-		TenantId:  tenantID,
-		AsAdmin:   asAdmin,
+		GrantedBy:   grantedBy,
+		UserId:      userID,
+		TenantId:    tenantID,
+		AsAdmin:     asAdmin,
+		TargetAppId: targetAppID,
 	})
 	if err != nil {
 		return err
@@ -97,11 +98,12 @@ func (c *client) CheckAccess(ctx context.Context, userID, tenantID string) (bool
 	return resp.GetAllowed(), nil
 }
 
-func (c *client) DeleteAccess(ctx context.Context, userID, TenantID, DeletedBy string) error {
+func (c *client) DeleteAccess(ctx context.Context, targetAppID, userID, TenantID, DeletedBy string) error {
 	resp, err := c.api.DeleteAccess(c.authed(ctx), &authzv1.DeleteAccessRequest{
-		UserId:    userID,
-		TenantId:  TenantID,
-		DeletedBy: DeletedBy,
+		UserId:      userID,
+		TenantId:    TenantID,
+		DeletedBy:   DeletedBy,
+		TargetAppId: targetAppID,
 	})
 	if err != nil {
 		return err
@@ -112,10 +114,11 @@ func (c *client) DeleteAccess(ctx context.Context, userID, TenantID, DeletedBy s
 	return nil
 }
 
-func (c *client) DeleteAdminAccess(ctx context.Context, userID, DeletedBy string) error {
+func (c *client) DeleteAdminAccess(ctx context.Context, targetAppID, userID, DeletedBy string) error {
 	resp, err := c.api.DeleteAdminAccess(c.authed(ctx), &authzv1.DeleteAdminAccessRequest{
-		UserId:    userID,
-		DeletedBy: DeletedBy,
+		UserId:      userID,
+		DeletedBy:   DeletedBy,
+		TargetAppId: targetAppID,
 	})
 	if err != nil {
 		return err
