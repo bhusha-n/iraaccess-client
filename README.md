@@ -41,7 +41,7 @@ Create your JSON file with the following layout:
 Run the following commands in your project terminal to install the client package:
 
 ```bash
-go get github.com/bhusha-n/iraaccess-client@v0.3.0
+go get github.com/bhusha-n/iraaccess-client@v0.3.1
 go mod tidy
 ```
 
@@ -69,7 +69,7 @@ func main() {
 	// 1. Initialize the client by passing the path to your JSON config file
 	client, err := ira.InitializeIraAccess("ira-config.json")
 	if err != nil {
-		log.Fatalf("Failed to initialize : %v", err)
+		log.Fatalf("failed to initialize : %v", err)
 	}
 
 	// 2. Ensure connection resources are safely closed when main exits
@@ -83,15 +83,15 @@ func main() {
 
 	isAdmin, err := client.CheckAdminAccess(ctx, "target_user_123")
 	if err != nil {
-		log.Printf("CheckAdminAccess failed: %v", err)
+		log.Printf(checkAdminAccess failed: %v", err)
 	}
-	log.Printf("User Admin status: %t", isAdmin)
+	log.Printf("user Admin status: %t", isAdmin)
 
 	isAllowed, err := client.CheckAccess(ctx, "target_user_123", "tenant_xyz")
 	if err != nil {
-		log.Printf("CheckAccess failed: %v", err)
+		log.Printf("checkAccess failed: %v", err)
 	}
-	log.Printf("User access to tenant allowed: %t", isAllowed)
+	log.Printf("user access to tenant allowed: %t", isAllowed)
 
 
 	//  Grant/Delete methods - management apps only
@@ -102,22 +102,22 @@ func main() {
 
 	err = client.GrantAdminAccess(ctx, targetAppID, "admin_user_1", "target_user_123")
 	if err != nil {
-		log.Printf("GrantAdminAccess failed: %v", err)
+		log.Printf("grantAdminAccess failed: %v", err)
 	}
 
 	err = client.GrantTenantAccess(ctx, targetAppID, "admin_user_1", "target_user_123", "tenant_xyz")
 	if err != nil {
-		log.Printf("GrantTenantAccess failed: %v", err)
+		log.Printf("grantTenantAccess failed: %v", err)
 	}
 
 	err = client.DeleteAccess(ctx, targetAppID, "target_user_123", "tenant_xyz", "admin_user_1")
 	if err != nil {
-		log.Printf("DeleteAccess failed: %v", err)
+		log.Printf("deleteAccess failed: %v", err)
 	}
 
 	err = client.DeleteAdminAccess(ctx, targetAppID, "target_user_123", "admin_user_1")
 	if err != nil {
-		log.Printf("DeleteAdminAccess failed: %v", err)
+		log.Printf("deleteAdminAccess failed: %v", err)
 	}
 }
 ```
