@@ -1,76 +1,152 @@
+
 syntax = "proto3";
 
-package IraAccess;
+package iraaccess.v1;
 
-option go_package = "github.com/bhusha-n/authz/proto/iraaccessv1;iraaccessv1";
+option go_package = "github.com/bhusha-n/IraAcesssManager/proto/authzv1;authzv1";
 
-
-service IraAccessService {
-
-  rpc GrantAccess(GrantAccessRequest) returns (GrantAccessResponse);
-
+service AccessManager {
+  rpc SetRole(SetRoleRequest) returns (SetRoleResponse);
+  rpc RemoveRole(RemoveRoleRequest) returns (RemoveRoleResponse);
+  rpc GrantResourceAccess(GrantResourceAccessRequest) returns (GrantResourceAccessResponse);
+  rpc RevokeResourceAccess(RevokeResourceAccessRequest) returns (RevokeResourceAccessResponse);
   rpc CheckAccess(CheckAccessRequest) returns (CheckAccessResponse);
-
-  rpc CheckAdminAccess(CheckAdminAccessRequest) returns (CheckAdminAccessResponse);
-
-  rpc DeleteAccess(DeleteAccessRequest) returns (DeleteAccessResponse);
-
-  rpc DeleteAdminAccess(DeleteAdminAccessRequest) returns (DeleteAdminAccessResponse);
+  rpc GetUserAccessTree(GetUserAccessTreeRequest) returns (GetUserAccessTreeResponse);
+  rpc GetResourceTypes(GetResourceTypesRequest) returns (GetResourceTypesResponse);
 }
 
-message GrantAccessRequest {
-  string user_id = 1;
-  string tenant_id = 2; 
-  bool as_admin = 3;
-  string granted_by=4;
-  string target_app_id = 5;
+enum Action {
+  ACTION_UNSPECIFIED = 0;
+  ACTION_VIEW = 1;
+  ACTION_CREATE = 2;
+  ACTION_UPDATE = 3;
+  ACTION_DELETE = 4;
 }
 
-message GrantAccessResponse {
-  bool success = 1;
-  string zed_token = 2;
+enum Role {
+  ROLE_UNSPECIFIED = 0;
+  ROLE_TENANT_MEMBER = 1;
+  ROLE_TENANT_ADMIN = 2;
+  ROLE_SUPER_ADMIN = 3;
 }
 
-message DeleteAccessRequest{
-  string user_id = 1;
+enum ResourceScope {
+  RESOURCE_SCOPE_UNSPECIFIED = 0;
+  RESOURCE_SCOPE_ALL = 1;
+  RESOURCE_SCOPE_SELECTED = 2;
+}
+
+message SetRoleRequest {
+  string target_app_id = 1;
   string tenant_id = 2;
-  string deleted_by=3;
-  string target_app_id = 4;
+  string user_id = 3;
+  Role role = 4;
+  string granted_by = 5;
 }
 
-message DeleteAccessResponse{
+message SetRoleResponse {
+  bool success = 1;
+  string zed_token = 2;
+}
+
+message RemoveRoleRequest {
+  string target_app_id = 1;
+  string tenant_id = 2;
+  string user_id = 3;
+  Role role = 4;
+  string deleted_by = 5;
+}
+
+message RemoveRoleResponse {
   bool success = 1;
   string zed_token = 2;
 }
 
 
-message DeleteAdminAccessRequest{
-  string user_id = 1;
-  string deleted_by=2;
-  string target_app_id = 3;
+message GrantResourceAccessRequest {
+  string target_app_id = 1;
+  string tenant_id = 2;
+  string user_id = 3;
+  string resource_type = 4;
+  ResourceScope scope = 5;
+  repeated string resource_ids = 6;
+  repeated Action actions = 7;
+  string granted_by = 8;
 }
 
-message DeleteAdminAccessResponse{
+message GrantResourceAccessResponse {
   bool success = 1;
   string zed_token = 2;
 }
 
+message RevokeResourceAccessRequest {
+  string target_app_id = 1;
+  string tenant_id = 2;
+  string user_id = 3;
+  string resource_type = 4;
+  ResourceScope scope = 5;
+  repeated string resource_ids = 6;
+  repeated Action actions = 7;
+  string deleted_by = 8;
+}
+
+message RevokeResourceAccessResponse {
+  bool success = 1;
+  string zed_token = 2;
+}
+
+// resource_id is ignored for ACTION_CREATE.
 message CheckAccessRequest {
   string user_id = 1;
-  string tenant_id = 2;
+  Action action = 2;
+  string resource_type = 3;
+  string resource_id = 4;
+  string tenant_id = 5;
 }
 
 message CheckAccessResponse {
   bool allowed = 1;
 }
 
-
-message CheckAdminAccessRequest {
+// target_app_id empty = caller's own app.
+message GetUserAccessTreeRequest {
   string user_id = 1;
+  string target_app_id = 2;
 }
 
-message CheckAdminAccessResponse {
-  bool allowed = 1;
+message GetUserAccessTreeResponse {
+  string user_id = 1;
+  ApplicationAccess application = 2;
 }
 
+message ApplicationAccess {
+  string app_id = 1;
+  Role role = 2;
+  repeated TenantAccess tenants = 3;
+}
 
+message TenantAccess {
+  string tenant_id = 1;
+  Role role = 2;
+  repeated ResourceTypeAccess resource_types = 3;
+}
+
+message ResourceTypeAccess {
+  string resource_type = 1;
+  repeated ResourceGrant grants = 2;
+}
+
+message ResourceGrant {
+  ResourceScope scope = 1;
+  repeated string resource_ids = 2;
+  repeated Action actions = 3;
+}
+
+// target_app_id empty = caller's own app.
+message GetResourceTypesRequest {
+  string target_app_id = 1;
+}
+
+message GetResourceTypesResponse {
+  repeated string resource_types = 1;
+}
